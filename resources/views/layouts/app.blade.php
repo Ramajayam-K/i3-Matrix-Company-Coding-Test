@@ -29,12 +29,14 @@
                 background: #80808024;
                 width: 100%;
                 height: 100vh;
+                display: none;
+                z-index: 10;
             }
             .backgroundLoarding img{
                 position: absolute;
                 top: 45%;
                 left: 45%;
-                z-index: 9;
+                z-index: 10;
                 transform: translate(-50px, -50px);
             }
         </style>

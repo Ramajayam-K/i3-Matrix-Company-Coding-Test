@@ -9,7 +9,7 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
-                <h1 class="text-xl w-25 font-bold">i3 Matrix Company Test</h1>
+                <h1 class="text-xl w-25 font-bold"><a href="{{ route('dashboard') }}"> i3 Matrix Company Test </a></h1>
                 <marquee behavior="" direction="left">
                     I am a Full Stack Web Developer with 2 years of experience in designing,
                     developing, and deploying scalable web applications. Proficient in frontend and back-end technologies, I excel in managing end-to-end
