@@ -99,6 +99,7 @@ cd <repository_folder>
         DB_DATABASE=i3matrixCodeTestLaravel
         DB_USERNAME=root
         DB_PASSWORD=
+        
     - Ensure that your MySQL server is running and adjust the database credentials as per your local configuration.
 
     - If you are using a database other than MySQL, make sure to modify the connection settings accordingly.
@@ -136,6 +137,7 @@ cd <repository_folder>
     Use the following command to start the backend Laravel server:
 
     php artisan serve
+
     The server will be running at http://localhost:8000.
 
 #### 2. Run the React development server:
@@ -143,6 +145,7 @@ cd <repository_folder>
     You can run the React development server for real-time updates:
 
     npm run dev
+
     The React app will be available at http://localhost:3000 (by default).
 
 ### Step 6: Access the Application
@@ -155,15 +158,15 @@ Register Page:
 
 Login Page:
 
-<img src="Demo/image/Login.png" alt="Register"/>
+<img src="Demo/image/login.png" alt="Login"/>
 
 Home Page:
 
-<img src="Demo/image/Home.png" alt="Register"/>
+<img src="Demo/image/Home.png" alt="Home"/>
 
 Profile Page:
 
-<img src="Demo/image/Profile.png" alt="Register"/>
+<img src="Demo/image/Profile.png" alt="Profile"/>
 
 ### Demo Video
 
