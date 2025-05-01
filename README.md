@@ -59,4 +59,115 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# i3-Matrix-Company-Coding-Test
+
+
+# i3-Matrix Company Coding Test
+
+This project is a part of the i3-Matrix Company Coding Test. The application is built using **Laravel** for the backend and **React.js** for the frontend.
+
+## Requirements
+
+Before starting the project, ensure that you have the following installed:
+
+- **PHP** >= 7.4
+- **Composer** (for managing PHP dependencies)
+- **Node.js** >= 14
+- **NPM** (for managing frontend dependencies)
+- **MySQL** (or another compatible database)
+
+## Setup Instructions
+
+### Step 1: Clone the Repository
+
+Clone the repository to your local machine and navigate to the project folder:
+
+git clone <repository_url>
+cd <repository_folder>
+
+### Step 2 : Set Up the Environment
+
+ #### 1. Copy the .env.example file to .env:
+    - This file contains environment-specific configuration settings. Create a copy of it as .env: cp .env.example .env
+
+#### 2. Update the .env file for the database connection:
+
+    - Open the .env file and modify the database connection settings:
+
+        DB_CONNECTION=mysql
+        DB_HOST=localhost
+        DB_PORT=3306
+        DB_DATABASE=i3matrixCodeTestLaravel
+        DB_USERNAME=root
+        DB_PASSWORD=
+    - Ensure that your MySQL server is running and adjust the database credentials as per your local configuration.
+
+    - If you are using a database other than MySQL, make sure to modify the connection settings accordingly.
+
+### Step 3: Install Dependencies
+
+#### 1. Install Laravel dependencies using Composer:
+
+    Run the following command to install PHP dependencies:
+
+    composer install
+
+#### 2. Install frontend dependencies using NPM:
+
+    Install the required Node.js packages:
+
+    npm install
+
+#### 3. Build the frontend assets:
+
+    After installing the dependencies, compile the frontend assets:
+
+    npm run build
+
+### Step 4: Run Migrations
+
+    Run the migration command to create the necessary database tables:
+
+    php artisan migrate
+
+### Step 5: Run the Application
+
+#### 1. Start the Laravel application server:
+
+    Use the following command to start the backend Laravel server:
+
+    php artisan serve
+    The server will be running at http://localhost:8000.
+
+#### 2. Run the React development server:
+
+    You can run the React development server for real-time updates:
+
+    npm run dev
+    The React app will be available at http://localhost:3000 (by default).
+
+### Step 6: Access the Application
+
+Once everything is set up and the servers are running, you can access the following pages:
+
+Register Page:
+
+<img src="Demo/image/Register.png" alt="Register"/>
+
+Login Page:
+
+<img src="Demo/image/Login.png" alt="Register"/>
+
+Home Page:
+
+<img src="Demo/image/Home.png" alt="Register"/>
+
+Profile Page:
+
+<img src="Demo/image/Profile.png" alt="Register"/>
+
+### Demo Video
+
+You can watch a demo of the application here:
+
+<video controls> <source src="path_to_demo_video.mp4" type="video/mp4"> Your browser does not support the video tag. </video>
+
