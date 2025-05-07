@@ -18,8 +18,9 @@ return new class extends Migration
             $table->enum('gender',['male','female'])->default('male');
             $table->string('address');
             $table->string('photo');
-            $table->string('password');
-            $table->enum('role',['admin','guest'])->default('guest');
+            $table->longText('password');
+            // $table->longText('recover_password');
+            $table->enum('role',['admin','user'])->default('user');
             $table->enum('status',['active','inactive'])->default('active');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

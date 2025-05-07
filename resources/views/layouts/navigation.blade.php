@@ -17,6 +17,9 @@
                     innovative approaches. With strong decision-making and problem-solving
                     abilities, I am committed to delivering impactful results in dynamic, fastpaced environments.
                 </marquee>
+                {{-- <button id="toggleBtn" class="toggle-btn bg-light">
+                    <i id="themeIcon" class="bi bi-moon-fill"></i>
+                </button> --}}
             </div>
 
             <!-- Settings Dropdown -->
@@ -99,3 +102,26 @@
         </div>
     </div>
 </nav>
+
+<script>
+    //  const toggleBtn = document.getElementById('toggleBtn');
+    // const themeIcon = document.getElementById('themeIcon');
+
+    // // Load saved theme
+    // if (localStorage.getItem('theme') === 'dark') {
+    //   document.body.classList.add('dark-mode');
+    //   themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
+    // }
+
+    // toggleBtn.addEventListener('click', () => {
+    //   document.body.classList.toggle('dark-mode');
+
+    //   if (document.body.classList.contains('dark-mode')) {
+    //     themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
+    //     localStorage.setItem('theme', 'dark');
+    //   } else {
+    //     themeIcon.classList.replace('bi-sun-fill', 'bi-moon-fill');
+    //     localStorage.setItem('theme', 'light');
+    //   }
+    // });
+</script>

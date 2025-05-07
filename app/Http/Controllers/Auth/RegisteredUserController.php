@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\EncryptionService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,6 +15,11 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
+    protected $encryptionService;
+    public function __construct(EncryptionService $encryptionService)
+    {
+        $this->encryptionService = $encryptionService;
+    }
     /**
      * Display the registration view.
      */
@@ -30,30 +36,35 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
+            'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
             'phone_number' => ['required', 'string'],
             'gender' => ['required', 'string'],
             'address' => ['required', 'string'],
-            'photo' => ['required', 'file','mimes:jpg,png,jpeg'],
+            'photo' => ['required', 'file', 'mimes:jpg,png,jpeg'],
             'password' => ['required', Rules\Password::defaults()],
+            // 'password' => ['required', Rules\Password::defaults()],
         ]);
 
-        if($request->hasFile('photo')){
-            $fileData=$request->file('photo');
-            $fileName=$fileData->getClientOriginalName().time().'.'.$fileData->getClientOriginalExtension();
-            $filePath = $fileData->storeAs('uploads', $fileName, 'public');
+        if ($request->hasFile('photo')) {
+            $fileData = $request->file('photo');
             $user = User::create([
                 'username' => $request->username,
                 'phone_number' => $request->phone_number,
                 'gender' => $request->gender,
                 'address' => $request->address,
-                'photo' => $filePath,
+                'photo' => 'Path',
                 'password' => Hash::make($request->password),
+                'recover_password' => $this->encryptionService->encrypt($request->password),
             ]);
-            
-            event(new Registered($user));
 
-            Auth::login($user);
+            $fileName = $fileData->getClientOriginalName() . time() . '.' . $fileData->getClientOriginalExtension();
+            $filePath = $fileData->storeAs('uploads/'+$user->id, $fileName, 'public');
+
+            $updateData=User::where('id',$user->id)->update(['path'=>$filePath]);
+
+            event(new Registered($updateData));
+
+            Auth::login($updateData);
 
             return redirect(route('dashboard', absolute: false));
         }

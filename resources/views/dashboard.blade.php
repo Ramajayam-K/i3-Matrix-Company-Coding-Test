@@ -2,43 +2,83 @@
     <div class="py-6">
         <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="container flex gap-3">
-                        <div class="card" style="width: 18rem;">
-                            <img src="/storage/{{Auth::user()->photo}}" alt="User Image" width="300">
-                            <div class="card-body">
-                              <h5 class="card-title font-bold text-lg">Personal Data : </h5>
-                              <hr class="mb-3">
-                              <p class="card-text">Name: {{Auth::user()->username}}</p>
-                              <p class="card-text">Gender: {{Auth::user()->gender}}</p>
-                              <p class="card-text">Phone No.: {{Auth::user()->phone_number}}</p>
-                              <p class="card-text">Address: {{Auth::user()->address}}</p>
+                <div class="text-gray-900 dark:text-gray-100">
+                    <div class="header p-2">
+                        <h2 class="text-2xl font-bold">Welcome back, <span id="userName" class="capitalize">{{Auth::user()->role}}</span>! 👋</h2>
+                        <p class="text-lg mt-3">
+                          We're thrilled to have you on board again. Your dashboard is all set to help you manage your account with ease.
+                          From profile updates to user insights and quick access to key features, everything is just a few clicks away.
+                          If you need help, feel free to reach out to our support team at any time.
+                          Thanks for being part of our journey!
+                        </p>
+                    </div>
+                    <div class="row p-3 w-100">
+                        <div class="col-12 col-md-12 col-lg-3 mb-3">
+                            <div class="flex items-center w-full justify-center mb-5 mt-5">
+                                <div class="max-w-xs">
+                                    <div class="bg-white shadow-xl rounded-lg py-3">
+                                        <div class="photo-wrapper p-2">
+                                            <img class="w-32 h-32 rounded-full mx-auto" src="/storage/{{Auth::user()->photo}}" alt="John Doe">
+                                        </div>
+                                        <div class="p-2">
+                                            <h3 class="text-center text-xl text-gray-900 font-medium leading-8">{{Auth::user()->username}}</h3>
+                                            <div class="text-center text-gray-400 text-sm font-semibold mt-1">
+                                                <p class="text-uppercase">{{Auth::user()->role}}</p>
+                                            </div>
+                                            <table class="text-sm my-3">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="px-2 py-2 text-gray-500 font-semibold">Gender</td>
+                                                        <td class="px-2 py-2 capitalize">{{Auth::user()->gender}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-2 py-2 text-gray-500 font-semibold">Phone</td>
+                                                        <td class="px-2 py-2">{{Auth::user()->phone_number}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-2 py-2 text-gray-500 font-semibold">Address</td>
+                                                        <td class="px-2 py-2 capitalize">{{Auth::user()->address}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                            
+                                            <div class="text-center my-3 p-1 bg-success rounded">
+                                                <button class="text-sm text-white" onclick="editUser({{Auth::user()->id}});">
+                                                    Update
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-    
-                        <hr>
-    
-                        <div class="card w-full">
-                            <div class="card-header">
-                                User List View
-                            </div>
-                            <div class="card-body">
-                                <table class="table table-striped table-bordered table-hover" id="UserListsView">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td class="text-start">Phone</td>
-                                            <td>Gender</td>
-                                            <td>Address</td>
-                                            <td>Photo</td>
-                                            <td>Status</td>
-                                            <td>Action</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="usersTableBody">
-    
-                                    </tbody>
-                                </table>
+                        <div class="col-12 col-md-12 col-lg-9 mb-3">
+                            <div class="card w-full mt-5">
+                                <div class="card-header flex justify-content-between">
+                                    User List View
+                                    @if (Auth::user()->role=='admin')
+                                        <button class="btn btn-primary text-white ps-2 pe-2 pt-1 pb-1" id="CreateUser" onclick="CreateUser()"><i class="fa-solid fa-plus"></i></button>
+                                    @endif
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-striped table-bordered table-hover" id="UserListsView">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                {{-- <td class="text-start">Password</td> --}}
+                                                <td class="text-start">Phone</td>
+                                                <td>Gender</td>
+                                                <td>Address</td>
+                                                <td>Photo</td>
+                                                <td>Status</td>
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="usersTableBody">
+        
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -46,19 +86,24 @@
                     <div id="UpdateViewUserModal" class="modal" tabindex="-1" role="dialog">
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
-                            <div class="modal-header">
+                            <div class="bg-light modal-header justify-content-between">
                               <h5 class="modal-title" id="UpdateModalTitle">Update User</h5>
-                              <button type="button" data-bs-dismiss="modal">
+                              <button type="button" data-bs-dismiss="modal" class="bg-dark text-white rounded p-1 ps-3 pe-3">
                                 <span>&times;</span>
                               </button>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body" style="overflow: auto;height: 450px;">
                                 <!-- Username -->
                                 <div>
                                     <x-input-label for="username" :value="__('Username : ')" />
                                     <x-text-input placeholder="Enter the username..."  id="username" class="block mt-1 w-full" type="text" name="username" />
                                 </div>
-
+                                @if (Auth::user()->role=='admin')
+                                    <div class="mt-4">
+                                        <x-input-label for="userPassword" :value="__('Password : ')" />
+                                        <x-text-input placeholder="Enter the password..."  id="userPassword" class="block mt-1 w-full" type="text" name="userPassword" />
+                                    </div>
+                                @endif
                                 <!-- phone numder -->
                                 <div class="mt-4">
                                     <x-input-label for="phone_number" :value="__('Phone Number : ')" />
@@ -97,7 +142,7 @@
                                 <div class="mt-4">
                                     <x-input-label for="user-role" :value="__('Role : ')" />
                                     <select class="form-control" name="user-role" id="user-role">
-                                        <option value="guest">Guest</option>
+                                        <option value="user">User</option>
                                         <option value="admin">Admin</option>
                                     </select>
                                 </div>
@@ -125,7 +170,12 @@
     @push('scripts')
         <script type="text/javascript">
             $(document).ready(function() {
-                loadUsers();
+                window.role='user';
+                @if(Auth::check() && Auth::user()->role == 'admin')
+                    loadUsers();
+                    window.role='admin';
+                @endif
+              
                 $('#user-photo').on('change', function () {
                     const file = this.files[0];
                     if (file) {
@@ -142,6 +192,7 @@
                     let status=$('#user-status').val().trim();
                     let role=$('#user-role').val().trim();
                     let id=$(this).attr('UserId');
+                    let userPassword=$('#userPassword').val();
 
                     const form = new FormData();
                     console.log(username,phone_number,address,photo,gender,role,status);
@@ -153,11 +204,14 @@
                     form.append('role', role);
                     form.append('status', status);
                     form.append('id', id);
+                    form.append('userPassword', userPassword);
+
+                    
 
                     $('.backgroundLoarding').show();
                     $.ajax({
                         type: "post",
-                        url: "userUpdate",
+                        url: ($(this).text().toLowerCase()=='save')?'userCreate':'userUpdate',
                         data: form,
                         dataType: "json",
                         processData:false,
@@ -210,7 +264,7 @@
                                         <td class="align-middle">${user.status}</td>
                                         <td class="text-center align-middle">
                                             <div class="button-group flex justify-center items-center gap-2">
-                                                ${user.status === 'active' ? `
+                                                ${(user.status === 'active'  && window.role=='admin') ? `
                                                     <button onclick="editUser(${user.id});">
                                                         <i class="fa-solid fa-pen-to-square text-success text-2xl"></i>
                                                     </button>
@@ -233,6 +287,7 @@
                         }
 
                         // Insert the table content into the tbody (with id 'usersTableBody')
+
                         $('#usersTableBody').html(tableContent);
                         $('#UserListsView').DataTable();  // Initialize DataTable
                         $('.backgroundLoarding').hide();
@@ -240,9 +295,29 @@
                 });
             }
 
+            function CreateUser(id=1){
+                $('#UpdateUserData').show();
+                $('#UpdateUserData').attr('UserId',0);
+                $('#UpdateUserData').text('Save');
+                $('#UpdateViewUserModal input,#UpdateViewUserModal select').prop('disabled',false);
+                $('#UpdateModalTitle').text('Create User Data');
+                $('#username').val('');
+                $('#phone_number').val('');
+                $('#address').val('');
+                $('#user-photo').val('');
+                $('.gender').prop('checked',false);
+                $('#PreviewUserPhoto').attr('src','');
+                $('#user-status').val('active');
+                $('#user-role').val('user');
+                $('#UpdateViewUserModal').modal({
+                    backdrop: false,
+                    keyboard: false
+                }).modal('show');
+            }
             async function editUser(id=1){
                 await GetAllUserData(id);
                 $('#UpdateUserData').attr('UserId',id);
+                $('#UpdateUserData').text('Update');
                 $('#UpdateViewUserModal input,#UpdateViewUserModal select').prop('disabled',false);
                 $('#UpdateUserData').show();
                 $('#UpdateModalTitle').text('Update User Data');

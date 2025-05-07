@@ -24,10 +24,15 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'username' => 'AdminCodeTest',
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'phone_number' => fake()->numberBetween(7000000000, 9999999999),
+            'gender' => 'male',
+            'address' => 'Vyasarpadi, chennai - 39',
+            'photo' => 'uploads/admin/adminprofile.webp',
+            'role' => 'admin',
+            // 'recover_password'=>
+            'password' => static::$password ??= Hash::make('Admin12&4$'),
             'remember_token' => Str::random(10),
         ];
     }
@@ -37,7 +42,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
