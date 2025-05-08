@@ -130,7 +130,17 @@ cd <repository_folder>
 
     php artisan migrate
 
-### Step 5: Run the Application
+### Step 5: Run Migrations
+
+    Run the sees command to create the admin loging enter in thr user table:
+
+    php artisan db:seed
+
+    Username: AdminCodeTest
+
+    Password: Admin12&4$
+
+### Step 6: Run the Application
 
 #### 1. Start the Laravel application server:
 

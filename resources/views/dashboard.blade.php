@@ -14,7 +14,7 @@
                     </div>
                     <div class="row p-3 w-100">
                         <div class="col-12 col-md-12 col-lg-3 mb-3">
-                            <div class="flex items-center w-full justify-center mb-5 mt-5">
+                            <div class="flex items-center w-full justify-center mb-5 mt-2">
                                 <div class="max-w-xs">
                                     <div class="bg-white shadow-xl rounded-lg py-3">
                                         <div class="photo-wrapper p-2">
@@ -53,7 +53,7 @@
                             </div>
                         </div>
                         <div class="col-12 col-md-12 col-lg-9 mb-3">
-                            <div class="card w-full mt-5">
+                            <div class="card w-full mt-2">
                                 <div class="card-header flex justify-content-between">
                                     User List View
                                     @if (Auth::user()->role=='admin')
