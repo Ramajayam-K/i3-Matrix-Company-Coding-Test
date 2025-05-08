@@ -58,13 +58,15 @@ class RegisteredUserController extends Controller
             ]);
 
             $fileName = $fileData->getClientOriginalName() . time() . '.' . $fileData->getClientOriginalExtension();
-            $filePath = $fileData->storeAs('uploads/'+$user->id, $fileName, 'public');
+            $filePath = $fileData->storeAs('uploads/'.$user->id, $fileName, 'public');
 
-            $updateData=User::where('id',$user->id)->update(['path'=>$filePath]);
+            $user->photo = $filePath;
+            
+            $user->save();
 
-            event(new Registered($updateData));
+            event(new Registered($user));
 
-            Auth::login($updateData);
+            Auth::login($user);
 
             return redirect(route('dashboard', absolute: false));
         }

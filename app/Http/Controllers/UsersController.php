@@ -30,16 +30,16 @@ class UsersController extends Controller
     {
         $GetAllUsers = [];
 
-        if(Auth::user()->role="admin"){
+        if (Auth::user()->role == "admin") {
             $GetAllUsers = User::orderBy('status', 'ASC')->get();
-       
+
             // if (count($GetAllUsers) > 0) {
             //     foreach ($GetAllUsers as $user) {
             //         $content .= '<tr>';
             //         $content .= '<td class="align-middle">' . $user->username . '</td>';
             //         $content .= '<td class="align-middle">' . $this->EncryptionService->decrypt($user->recover_password) . '</td>';
-    
-    
+
+
             //         $content .= '<td class="text-start align-middle">' . $user->phone_number . '</td>';
             //         $content .= '<td class="align-middle">' . $user->gender . '</td>';
             //         $content .= '<td class="align-middle">' . $user->address . '</td>';
@@ -49,7 +49,7 @@ class UsersController extends Controller
             //         $content .= '<td class="align-middle">' . $user->status . '</td>';
             //         $content .= '<td class="text-center align-middle">
             //                         <div class="button-group flex justify-center items-center gap-2">';
-    
+
             //         if ($user->status === 'active') {
             //             $content .= '<button onclick="editUser(' . $user->id . ');">
             //                             <i class="fa-solid fa-pen-to-square text-success text-2xl"></i>
@@ -65,22 +65,24 @@ class UsersController extends Controller
             //                             <i class="fa-solid fa-trash-arrow-up text-danger text-2xl"></i>
             //                         </button>';
             //         }
-    
+
             //         $content .= '</div></td></tr>';
             //     }
             // }
+        } else {
+            $GetAllUsers = User::where('role', 'user')->orderBy('status', 'ASC')->get();
         }
 
         return response()->json($GetAllUsers);
     }
 
-        /**
+    /**
      * Display the specified resource.
      */
     public function create(Request $request)
     {
 
-        if(Auth::user()->role=="admin"){
+        if (Auth::user()->role == "admin") {
             $request->validate([
                 'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
                 'phone_number' => ['required', 'string'],
@@ -99,22 +101,22 @@ class UsersController extends Controller
                     'gender' => $request->gender,
                     'address' => $request->address,
                     'photo' => 'Path',
-                    'password' => Hash::make($request->password),
-                    'recover_password' => $this->encryptionService->encrypt($request->password),
+                    'password' => Hash::make($request->userPassword),
+                    // 'recover_password' => $this->encryptionService->encrypt($request->password),
                 ]);
 
                 $fileName = $fileData->getClientOriginalName() . time() . '.' . $fileData->getClientOriginalExtension();
-                $filePath = $fileData->storeAs('uploads/'.$user->id, $fileName, 'public');
+                $filePath = $fileData->storeAs('uploads/' . $user->id, $fileName, 'public');
 
-                $updateUser=User::where('id',$user->id)->update(['photo'=>$filePath]);
+                $updateUser = User::where('id', $user->id)->update(['photo' => $filePath]);
 
                 if ($updateUser == 0) {
                     return response()->json(['status' => $updateUser, 'message' => 'Data is not inserted.']);
                 }
                 return response()->json(['status' => $updateUser, 'message' => 'User data is inserted successfully.']);
             }
-        }else{
-            return response()->json(['status' => 0, 'message' => 'You did not have access to creat new user.']);
+        } else {
+            return response()->json(['status' => 0, 'message' => 'You did not have access to create new user.']);
         }
     }
 
@@ -123,12 +125,16 @@ class UsersController extends Controller
      */
     public function show(Request $request)
     {
-        $signleUser = [];
-        if (isset($request->id)) {
-            $signleUser = User::where('id', '=', $request->id)->get();
-        }
+        if (Auth::user()->role == "admin" || (isset($request->id) && $request->id == Auth::user()->id)) {
+            $signleUser = [];
+            if (isset($request->id)) {
+                $signleUser = User::where('id', '=', $request->id)->get();
+            }
 
-        return response()->json((isset($signleUser[0])) ? $signleUser[0] : $signleUser);
+            return response()->json(['status' => 1, 'users' => (isset($signleUser[0])) ? $signleUser[0] : $signleUser]);
+        } else {
+            return response()->json(['status' => 0, 'message' => 'You did not have access to view user.']);
+        }
     }
 
     /**
@@ -159,7 +165,9 @@ class UsersController extends Controller
             return response()->json(['status' => 0, 'message' => 'The username has already been taken.']);
         }
 
-
+        if (Auth::user()->role == "user" && $request->id != Auth::user()->id) {
+            return response()->json(['status' => $updateUser, 'message' => 'You are not able to update the user data.']);
+        }
         if (isset($request->id) && $request->id != 0) {
             $username = $request->username;
             $phone_number = $request->phone_number;
@@ -167,13 +175,13 @@ class UsersController extends Controller
             $address = $request->address;
             $role = $request->role;
             $status = $request->status;
-            $userPassword=$request->userPassword;
+            $userPassword = $request->userPassword;
 
 
             $updateData = [];
 
-            if(!empty($userPassword) && Auth::user()->role=="admin"){
-                $updateData['password'] = $userPassword;
+            if (!empty($userPassword) && Auth::user()->role == "admin") {
+                $updateData['password'] = Hash::make($userPassword);
             }
 
             if (!empty($username)) {
@@ -236,17 +244,21 @@ class UsersController extends Controller
      */
     public function destroy(Request $request)
     {
-        $deleteUser = 0;
+        if (Auth::user()->role == "admin") {
+            $deleteUser = 0;
 
-        if (isset($request->id)) {
-            $deleteUser = User::where('id', $request->id)->update(['status' => 'inactive']);
+            if (isset($request->id)) {
+                $deleteUser = User::where('id', $request->id)->update(['status' => 'inactive']);
+            }
+
+            return response()->json([
+                'success' => $deleteUser ? true : false,
+                'message' => $deleteUser ? 'User deleted successfully.' : 'User not found or already deleted.',
+                'status' => $deleteUser
+            ]);
+        } else {
+            return response()->json(['status' => 0, 'message' => 'You did not have access to delete user.']);
         }
-
-        return response()->json([
-            'success' => $deleteUser ? true : false,
-            'message' => $deleteUser ? 'User deleted successfully.' : 'User not found or already deleted.',
-            'status' => $deleteUser
-        ]);
     }
 
     /**
@@ -254,16 +266,20 @@ class UsersController extends Controller
      */
     public function restore(Request $request)
     {
-        $restoreUser = 0;
+        if (Auth::user()->role == "admin") {
+            $restoreUser = 0;
 
-        if (isset($request->id)) {
-            $restoreUser = User::where('id', $request->id)->update(['status' => 'active']);
+            if (isset($request->id)) {
+                $restoreUser = User::where('id', $request->id)->update(['status' => 'active']);
+            }
+
+            return response()->json([
+                'success' => $restoreUser ? true : false,
+                'message' => $restoreUser ? 'User restored successfully.' : 'User not found or already restored.',
+                'status' => $restoreUser
+            ]);
+        } else {
+            return response()->json(['status' => 0, 'message' => 'You did not have access to delete user.']);
         }
-
-        return response()->json([
-            'success' => $restoreUser ? true : false,
-            'message' => $restoreUser ? 'User restored successfully.' : 'User not found or already restored.',
-            'status' => $restoreUser
-        ]);
     }
 }

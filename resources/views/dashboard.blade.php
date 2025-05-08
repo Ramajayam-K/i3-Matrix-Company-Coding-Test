@@ -69,9 +69,12 @@
                                                 <td class="text-start">Phone</td>
                                                 <td>Gender</td>
                                                 <td>Address</td>
+                                                <td>Role</td>
                                                 <td>Photo</td>
                                                 <td>Status</td>
-                                                <td>Action</td>
+                                                @if (Auth::user()->role=='admin')
+                                                    <td>Action</td>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody id="usersTableBody">
@@ -134,7 +137,7 @@
                                 <div class="mt-4">
                                     <x-input-label for="photo" :value="__('Photo : ')" />
                                     <div class="user_profile_image flex gap-2">
-                                        <x-text-input id="file" accept="image/jpeg, image/png, image/jpg" class="block mt-1 w-full border" style="padding: 1vw;" type="file" id="user-photo" name="photo"/>
+                                        <x-text-input id="file" accept="image/jpeg, image/png, image/jpg" class="block mt-1 w-full border" style="padding: .6vw;" type="file" id="user-photo" name="photo"/>
                                         <img :src="" width="60" alt="User Photo" id="PreviewUserPhoto"/>
                                     </div>
                                 </div>
@@ -172,9 +175,10 @@
             $(document).ready(function() {
                 window.role='user';
                 @if(Auth::check() && Auth::user()->role == 'admin')
-                    loadUsers();
                     window.role='admin';
                 @endif
+
+                loadUsers();
               
                 $('#user-photo').on('change', function () {
                     const file = this.files[0];
@@ -245,52 +249,55 @@
                     url: 'GetAllUsers', // Your API endpoint to fetch users
                     type: 'post',       // Use GET method to retrieve users
                     dataType: 'json',  // Expecting JSON data from the server
-                    success: function(users) {
+                    success: function(response) {
                         let tableContent = '';
+                        console.log(response.length);
+                        console.log(response);
 
                         // Check if there are users
-                        if (users.length > 0) {
+                        if (response.length > 0) {
                             // Loop through each user to generate the table rows
-                            $.each(users, function(index, user) {
+                            $.each(response, function(index, user) {
                                 tableContent += `
                                     <tr>
                                         <td class="align-middle">${user.username}</td>
                                         <td class="text-start align-middle">${user.phone_number}</td>
                                         <td class="align-middle">${user.gender}</td>
                                         <td class="align-middle">${user.address}</td>
+                                        <td class="align-middle">${user.role}</td>
                                         <td style="text-align: -webkit-center;">
                                             <img src="/storage/${user.photo}" alt="User Photo" width="50">
                                         </td>
-                                        <td class="align-middle">${user.status}</td>
-                                        <td class="text-center align-middle">
-                                            <div class="button-group flex justify-center items-center gap-2">
-                                                ${(user.status === 'active'  && window.role=='admin') ? `
-                                                    <button onclick="editUser(${user.id});">
-                                                        <i class="fa-solid fa-pen-to-square text-success text-2xl"></i>
-                                                    </button>
-                                                    <button onclick="deleteUser(${user.id});">
-                                                        <i class="fa-solid fa-trash text-danger text-2xl"></i>
-                                                    </button>
-                                                    <button onclick="viewUser(${user.id});">
-                                                        <i class="fa-solid fa-eye text-info text-2xl"></i>
-                                                    </button>
-                                                ` : `
-                                                    <button onclick="restoreUser(${user.id});">
-                                                        <i class="fa-solid fa-trash-arrow-up text-danger text-2xl"></i>
-                                                    </button>
-                                                `}
-                                            </div>
+                                        <td class="align-middle">${user.status}</td>`
+                                        if(window.role=='admin'){
+                                            tableContent +=`<td class="text-center align-middle">
+                                            <div class="button-group flex justify-center items-center gap-2">`
+                                            if(user.status=='active'){
+                                                tableContent +=`<button onclick="editUser(${user.id});">
+                                                <i class="fa-solid fa-pen-to-square text-success text-2xl"></i>
+                                                </button>
+                                                <button onclick="deleteUser(${user.id});">
+                                                    <i class="fa-solid fa-trash text-danger text-2xl"></i>
+                                                </button>
+                                                <button onclick="viewUser(${user.id});">
+                                                    <i class="fa-solid fa-eye text-info text-2xl"></i>
+                                                </button>`;
+                                            }else{
+                                                tableContent +=`
+                                                <button onclick="restoreUser(${user.id});">
+                                                    <i class="fa-solid fa-trash-arrow-up text-danger text-2xl"></i>
+                                                </button>`
+                                            }
+                                        }
+                        tableContent +=`</div>
                                         </td>
                                     </tr>
                                 `;
                             });
+                            $('#usersTableBody').html(tableContent);
+                            $('#UserListsView').DataTable();  // Initialize DataTable
+                            $('.backgroundLoarding').hide();
                         }
-
-                        // Insert the table content into the tbody (with id 'usersTableBody')
-
-                        $('#usersTableBody').html(tableContent);
-                        $('#UserListsView').DataTable();  // Initialize DataTable
-                        $('.backgroundLoarding').hide();
                     }
                 });
             }
@@ -349,15 +356,24 @@
                     dataType: "json",
                     success: async function (response) {
                         console.log(response);
-                        $('#username').val(response['username']);
-                        $('#phone_number').val(response['phone_number']);
-                        $('#address').val(response['address']);
-                        $('#user-photo').val('');
-                        $('.gender[value="'+response['gender']+'"]').prop('checked',true);
-                        $('#PreviewUserPhoto').attr('src','/storage/'+response['photo']);
-                        $('#user-status').val(response['status']);
-                        $('#user-role').val(response['role']);
                         $('.backgroundLoarding').hide();
+                        if(response.status==1){
+                            let user=response.users;
+                            $('#username').val(user.username);
+                            $('#phone_number').val(user['phone_number']);
+                            $('#address').val(user['address']);
+                            $('#user-photo').val('');
+                            $('.gender[value="'+user['gender']+'"]').prop('checked',true);
+                            $('#PreviewUserPhoto').attr('src','/storage/'+user['photo']);
+                            $('#user-status').val(user['status']);
+                            $('#user-role').val(user['role']);
+                        }else{
+                            swal.fire({
+                                icon:'error',
+                                text:response.message,
+                                allowOutsideClick:false,
+                            })
+                        }
                     }
                 });
             }
