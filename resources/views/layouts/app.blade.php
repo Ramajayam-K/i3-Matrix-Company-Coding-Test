@@ -65,6 +65,7 @@
 
 
             $(document).ajaxError(function(event,jqxhr,settings){
+                $('.backgroundLoarding').hide();
                 if(jqxhr.status==500){
                     swal.fire({
                         icon:'error',
